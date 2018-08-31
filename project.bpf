@@ -1,0 +1,13 @@
+function("_init"):
+	x = 1
+	y = 1
+
+function("_update"):
+	if btn("U"): y += 1
+	if btn("D"): y -= 1
+	if btn("L"): x -= 1
+	if btn("R"): x += 1
+
+function("_draw"):
+	cls()
+	pset(x, y)
