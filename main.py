@@ -26,8 +26,14 @@ def draw_display():
 
 #bpf_init()
 
-while True:
+running = True
+while running:
+	for event in pg.event.get(): # User did something
+		if event.type == pg.QUIT: # If user clicked close
+			running=False # Flag that we are done so we exit this loop
 	delta = clock.tick(30)
 	#bpf_update(delta)
 	#bpf_draw()
 	draw_display()
+
+pg.quit()
