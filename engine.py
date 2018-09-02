@@ -1,4 +1,5 @@
 import pygame as pg
+from font import get_letter
 
 def get_button(button):
 	keys = pygame.key.get_pressed()
@@ -14,3 +15,16 @@ def get_button(button):
 		return keys[pg.K_left]
 	if button == "_R" or button == 5:
 		return keys[pg.K_right]
+
+def display_print(screen, text, x, y, inv=False):
+	x = int(x)
+	y = int(y)
+	for i, c in enumerate(text):
+		letter = get_letter(c)
+		for ly, row in enumerate(letter):
+			for lx, pixel in enumerate(row):
+				tx = x+lx+(i*4)
+				ty = y+ly
+				if inv:
+					pixel = not pixel
+				screen[tx][ty] = pixel

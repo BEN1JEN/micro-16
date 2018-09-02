@@ -7,7 +7,7 @@ screen = []
 for x in range(128):
 	screen.append([])
 	for y in range(64):
-		screen[x].append(True)
+		screen[x].append(False)
 
 # initalyze pygame
 pg.init()
@@ -25,6 +25,7 @@ def draw_display():
 
 
 #bpf_init()
+bpf.execute_command(screen, "print(hello there, 16, 29)")
 
 running = True
 while running:
