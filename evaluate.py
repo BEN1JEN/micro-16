@@ -8,16 +8,29 @@ def expression(exp):
 
 	for thing in exp:
 		if thing == ")":
-			
-		elif re.search("^\d\.$", thing):
+			while len(op_stack) != 0 and op_stack[-1] != "(":
+				num2 = num_stack.pop()
+				num1 = num_stack.pop()
+				num = calculate_op(num1, num2, op_stack.pop())
+				num_stack.append(num)
+			op_stack.pop()
+		elif re.search("^[\d\.]+$", thing):
 			num_stack.append(thing)
 		elif re.search("^\D=?$", thing):
-			while cmp_op_order(op_stack[-1], thing):
+			while len(op_stack) != 0 and cmp_op_order(op_stack[-1], thing):
 				num2 = num_stack.pop()
 				num1 = num_stack.pop()
 				num = calculate_op(num1, num2, op_stack.pop())
 				num_stack.append(num)
 			op_stack.append(thing)
+
+	while len(op_stack)!=0:
+		num2 = num_stack.pop()
+		num1 = num_stack.pop()
+		num = calculate_op(num1, num2, op_stack.pop())
+		num_stack.append(num)
+
+	return num_stack[0]
 
 def seperate_exp(exp):
 	matches = re.finditer(r"[\d\.]+|\D=?", exp)
@@ -50,21 +63,7 @@ def get_op_order(op):
 		return 5
 
 def calculate_op(num1, num2, op):
-	if op == "+":
-		return num1+num2
-	elif op == "-":
-		return num1-num2
-	elif op == "*":
-		return num1*num2
-	elif op == "%":
-		return num1%num2
-	elif op == "^":
-		return pow(num1, num2)
-	elif op == "root":
-		return pow(num2, 1/num1)
-	elif op == "log":
-		return math.log(num2, num1)
-	elif op == "=" or op == "==":
+	if op == "=" or op == "==":
 		return num1 == num2
 	elif op == ">" or op == "!<=" or op == "!=<":
 		return num1 > num2
@@ -72,7 +71,7 @@ def calculate_op(num1, num2, op):
 		return num1 < num2
 	elif op == ">=" or op == "=>" or op == "!<":
 		return num1 >= num2
-	elif op == "<=" or op == "=<" or op = "!>":
+	elif op == "<=" or op == "=<" or op == "!>":
 		return num1 <= num2
 	elif op == "and" or op == "&":
 		return num1 and num2
@@ -87,4 +86,22 @@ def calculate_op(num1, num2, op):
 	elif op == "nxor" or op == "!$":
 		return not ((num1 or num2) and not (num1 and num2))
 
-print(expression("123+254*32573+487.87==7&47"))
+	num1 = float(num1)
+	num2 = float(num2)
+
+	if op == "+":
+		return num1+num2
+	elif op == "-":
+		return num1-num2
+	elif op == "*":
+		return num1*num2
+	elif op == "%":
+		return num1%num2
+	elif op == "^":
+		return pow(num1, num2)
+	elif op == "root":
+		return pow(num2, 1/num1)
+	elif op == "log":
+		return math.log(num2, num1)
+
+print(expression("4-2*2"))
