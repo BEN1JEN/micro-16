@@ -1,4 +1,6 @@
 import re
+import bpf
+import variable
 
 def clean_pram(pram):
 	to_erase = []
@@ -19,6 +21,12 @@ def clean_pram(pram):
 	return clean_pram
 
 def calc_alternitives_for_pram(pram):
-	vars = re.findall(r"~[a-zA-Z][a-zA-Z ]*[a-zA-Z]", pram)
-	commands = re.findall(r"[a-zA-Z][a-zA-Z ]*[a-zA-Z](.*?)", pram)
-	return pram
+	alt_pram = re.sub(r"~([a-zA-Z][a-zA-Z ]*[a-zA-Z])", replace_var, pram)
+	alt_pram = re.sub(r"[a-zA-Z][a-zA-Z ]*[a-zA-Z]\(.*?\)", replace_cmd, alt_pram)
+	return alt_pram
+
+def replace_var(m):
+	return str(variable.get_var(m.group(1)))
+
+def replace_cmd(m):
+	return str(bpf.execute_command(m.group(0)))

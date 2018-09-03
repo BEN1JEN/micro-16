@@ -8,7 +8,7 @@ def discard(word, discard_char):
 	return clean_word
 
 def get_until(word, end_char):
-	until = re.match("(.*)" + end_char, word)
+	until = re.match("^(.*?)" + end_char, word)
 	return until.group(1), until.end()
 
 def seperate(word, seperator):
