@@ -1,3 +1,4 @@
+import re
 def discard(word, discard_char):
 	clean_word = ""
 	for i in range(len(word)):
@@ -6,16 +7,9 @@ def discard(word, discard_char):
 			clean_word = clean_word + char
 	return clean_word
 
-def get_until(word, seperator):
-	until_word = ""
-	i = 0
-	char = ""
-	while char != seperator and i < len(word):
-		char = word[i:i+1]
-		if char != seperator:
-			until_word = until_word + char
-		i += 1
-	return until_word, i
+def get_until(word, end_char):
+	until = re.match("(.*)" + end_char, word)
+	return until.group(1), until.end()
 
 def seperate(word, seperator):
 	words = []

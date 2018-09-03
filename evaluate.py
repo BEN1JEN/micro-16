@@ -1,6 +1,7 @@
 from util import *
 import re
-import math
+import coperator as o
+
 def expression(exp):
 	op_stack = []
 	num_stack = []
@@ -14,9 +15,9 @@ def expression(exp):
 				num = calculate_op(num1, num2, op_stack.pop())
 				num_stack.append(num)
 			op_stack.pop()
-		elif re.search("^[\d\.]+$", thing):
+		elif re.search("^[0-9a-zA-Z \.]+$", thing):
 			num_stack.append(thing)
-		elif re.search("^\D=?$", thing):
+		elif re.search("^[^0-9a-zA-Z \.][=><]?$", thing):
 			while len(op_stack) != 0 and cmp_op_order(op_stack[-1], thing):
 				num2 = num_stack.pop()
 				num1 = num_stack.pop()
@@ -33,7 +34,7 @@ def expression(exp):
 	return num_stack[0]
 
 def seperate_exp(exp):
-	matches = re.finditer(r"[\d\.]+|\D=?", exp)
+	matches = re.finditer(r"[0-9a-zA-Z \.]+|[^0-9a-zA-Z \.][=><]?", exp)
 	output = []
 	for match in matches:
 		output.append(match.group(0))
@@ -46,62 +47,62 @@ def get_op_order(op):
 	if op == "(":
 		return 0
 	elif op == "+" or op == "-":
-		return 1
-	elif op == "*" or op == "/" or op == "%":
-		return 2
-	elif op == "^" or op == "root" or op == "log":
 		return 3
-	elif op == "=" or op == "==" or op == "!=" or op == "!==":
+	elif op == "*" or op == "/" or op == "%":
 		return 4
+	elif op == "^" or op == "root" or op == "log":
+		return 5
+	elif op == "=" or op == "==" or op == "$" or op == "$=" or op == "!=" or op == "!==" or op == "!$" or op == "!$=":
+		return 2
 	elif op == ">" or op == "<" or op == ">=" or op == "<=" or op == "=>" or op == "=<":
-		return 4
+		return 2
 	elif op == "!>" or op == "!<" or op == "!>=" or op == "!<=" or op == "!=>" or op == "!=<":
-		return 4
+		return 2
 	elif op == "and" or op == "&" or op == "or" or op == "|" or op == "xor" or op == "$":
-		return 5
+		return 1
 	elif op == "nand" or op == "!&" or op == "nor" or op == "!|" or op == "xnor" or op == "!$":
-		return 5
+		return 1
 
-def calculate_op(num1, num2, op):
+def calculate_op(val1, val2, op):
 	if op == "=" or op == "==":
-		return num1 == num2
+		return o.cequal(val1, val2)
+	elif op == "$" or op == "$=":
+		return o.reference_equal(val1, val2)
+	elif op == "!=" or op == "!==":
+		return not o.cequal(val1, val2)
+	elif op == "!$" or op == "!$=":
+		return not o.reference_equal(val1, val2)
 	elif op == ">" or op == "!<=" or op == "!=<":
-		return num1 > num2
+		return o.greater_then(val1, val2)
 	elif op == "<" or op == "!>=" or op == "!=>":
-		return num1 < num2
+		return o.greater_then(val2, val1)
 	elif op == ">=" or op == "=>" or op == "!<":
-		return num1 >= num2
+		return o.greater_then_or_equal(val1, val2)
 	elif op == "<=" or op == "=<" or op == "!>":
-		return num1 <= num2
+		return o.greater_then_or_equal(val2, val1)
 	elif op == "and" or op == "&":
-		return num1 and num2
+		return o.cand(val1, val2)
 	elif op == "or" or op == "|":
-		return num1 or num2
+		return o.cor(val1, val2)
 	elif op == "xor" or op == "$":
-		return (num1 or num2) and not (num1 and num2)
+		return o.cxor(val1, val2)
 	elif op == "nand" or op == "!&":
-		return not (num1 and num2)
+		return not o.cand(val1, val2)
 	elif op == "nor" or op == "!|":
-		return not (num1 or num2)
+		return not o.cor(val1, val2)
 	elif op == "nxor" or op == "!$":
-		return not ((num1 or num2) and not (num1 and num2))
-
-	num1 = float(num1)
-	num2 = float(num2)
-
+		return not o.cxor(val1, val2)
 	if op == "+":
-		return num1+num2
+		return o.cadd(val1, val2)
 	elif op == "-":
-		return num1-num2
+		return o.csubtract(val1, val2)
 	elif op == "*":
-		return num1*num2
+		return o.cmultiply(val1, val2)
 	elif op == "%":
-		return num1%num2
+		return o.cmodulo(val1, val2)
 	elif op == "^":
-		return pow(num1, num2)
+		return o.cpower(val1, val2)
 	elif op == "root":
-		return pow(num2, 1/num1)
+		return o.croot(val1, val2)
 	elif op == "log":
-		return math.log(num2, num1)
-
-print(expression("4-2*2"))
+		return o.clog(val1, val2)
