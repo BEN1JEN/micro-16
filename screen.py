@@ -36,3 +36,6 @@ def update_pygame():
 
 def quit():
 	pg.quit()
+
+def get_screen():
+	return screen
