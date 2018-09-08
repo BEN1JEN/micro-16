@@ -1,8 +1,10 @@
 from util import *
 import re
 import coperator as o
+import variable
 
 def expression(exp):
+	print(exp)
 	op_stack = []
 	num_stack = []
 	exp = seperate_exp(exp)
@@ -15,9 +17,12 @@ def expression(exp):
 				num = calculate_op(num1, num2, op_stack.pop())
 				num_stack.append(num)
 			op_stack.pop()
-		elif re.search("^[0-9a-zA-Z \.]+$", thing):
-			num_stack.append(thing)
-		elif re.search("^[^0-9a-zA-Z \.][=><]?$", thing):
+		elif re.search("^[0-9a-zA-Z \.{}]+$", thing):
+			if thing[0] == "{" and thing[-1] == "}":
+				num_stack.append(variable.get_table(thing[1:-1]))
+			else:
+				num_stack.append(thing)
+		elif re.search("^[^0-9a-zA-Z \.{}][=><]?$", thing):
 			while len(op_stack) != 0 and cmp_op_order(op_stack[-1], thing):
 				num2 = num_stack.pop()
 				num1 = num_stack.pop()
@@ -34,7 +39,7 @@ def expression(exp):
 	return num_stack[0]
 
 def seperate_exp(exp):
-	matches = re.finditer(r"[0-9a-zA-Z \.]+|[^0-9a-zA-Z \.][=><]?", exp)
+	matches = re.finditer(r"[0-9a-zA-Z \.{}]+|[^0-9a-zA-Z \.{}][=><]?", exp)
 	output = []
 	for match in matches:
 		output.append(match.group(0))

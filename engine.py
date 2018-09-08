@@ -2,11 +2,11 @@ import pygame as pg
 from font import get_letter
 
 import screen
-import st7565
+#import st7565
 
-glcd = st7565.Glcd(rgb=[21,20,16])
-glcd.init()
-glcd.set_backlight_color(100, 0, 0)
+#glcd = st7565.Glcd(rgb=[21,20,16])
+#glcd.init()
+#glcd.set_backlight_color(100, 0, 0)
 
 output = {"screen": True, "lcd": False}
 

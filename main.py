@@ -3,7 +3,9 @@ import screen
 import engine
 
 #bpf_init()
-bpf.execute_command("print(hello there, ~test, twentynine())")
+bpf.execute_set_variable("test variable [ height ] = 16")
+bpf.execute_command("print(hello there, 16, twentynine())")
+bpf.execute_command("py_print(~table)")
 
 running = True
 while running:
